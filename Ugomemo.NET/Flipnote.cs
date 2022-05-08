@@ -4,6 +4,6 @@ namespace Ugomemo.NET
 {
     public class Flipnote
     {
-
+        
     }
 }
