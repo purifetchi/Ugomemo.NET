@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Ugomemo.NET.Exceptions;
 using BinaryBitLib;
 
@@ -9,6 +10,11 @@ namespace Ugomemo.NET
         private static readonly char[] MAGIC_STRING = { 'P', 'A', 'R', 'A' };
         private const uint FORMAT_VERSION = 0x24;
 
+        /// <summary>
+        /// Constant epoch, always at the 1st of January 2000.
+        /// </summary>
+        private static readonly DateTimeOffset EPOCH = DateTimeOffset.FromUnixTimeSeconds(946684800);
+
         private void Parse(string filename)
         {
             using var fileStream = new FileStream(filename, FileMode.Open);
@@ -16,6 +22,7 @@ namespace Ugomemo.NET
             bitReader.Encoding = System.Text.Encoding.ASCII;
 
             ParseHeader(filename, bitReader);
+            ParseMetadata(bitReader);
         }
 
         /// <summary>
@@ -38,6 +45,26 @@ namespace Ugomemo.NET
             var formatVersion = reader.ReadUInt(16);
             if (formatVersion != FORMAT_VERSION)
                 throw new NotAFlipnoteException($"{filename} is not a flipnote - invalid format version!");
+        }
+
+        /// <summary>
+        /// Parses the metadata of the flipnote.
+        /// </summary>
+        private void ParseMetadata(BinaryBitReader reader)
+        {
+            Locked = reader.ReadUInt(16) == 1;
+
+            // TODO: Parse all of the skipped data.
+            //       - Author name
+            //       - Author ID
+            //       - Filename
+            reader.ReadBytes(136);
+
+            var timestamp = reader.ReadUInt();
+            CreatedOn = EPOCH.AddSeconds(timestamp);
+
+            // NOTE: The last 2 bytes of the metadata are always null and ignored.
+            reader.ReadUInt(16);
         }
     }
 }

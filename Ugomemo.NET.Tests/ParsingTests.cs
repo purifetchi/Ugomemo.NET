@@ -42,5 +42,15 @@ namespace Ugomemo.NET.Tests
             var flipnote = new Flipnote("pekira_beach.ppm");
             Assert.IsTrue(flipnote.FrameCount == 186);
         }
+
+        [TestMethod]
+        [DeploymentItem("TestFiles/pekira_beach.ppm")]
+        public void EnsureCorrectCreatedOn()
+        {
+            var flipnote = new Flipnote("pekira_beach.ppm");
+            Assert.IsTrue(flipnote.CreatedOn.Year == 2011);
+            Assert.IsTrue(flipnote.CreatedOn.Month == 7);
+            Assert.IsTrue(flipnote.CreatedOn.Day == 30);
+        }
     }
 }
