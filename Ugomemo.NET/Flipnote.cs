@@ -24,6 +24,11 @@ namespace Ugomemo.NET
         /// </summary>
         public Thumbnail Thumbnail { get; private set; }
 
+        /// <summary>
+        /// The meta information about the animation.
+        /// </summary>
+        public AnimationInfo AnimationInfo { get; private set; }
+
         private uint AnimationDataSize { get; set; }
         private uint SoundDataSize { get; set; }
 

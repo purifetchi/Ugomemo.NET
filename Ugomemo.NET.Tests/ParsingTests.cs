@@ -71,5 +71,15 @@ namespace Ugomemo.NET.Tests
             Assert.IsTrue(flipnote.Thumbnail.Image[1, 0] == new Rgb24(173, 171, 255));
             Assert.IsTrue(flipnote.Thumbnail.Image[2, 0] == new Rgb24(173, 171, 255));
         }
+
+        [TestMethod]
+        [DeploymentItem("TestFiles/pekira_beach.ppm")]
+        public void EnsureFlipnoteAnimationInfoIsCorrect()
+        {
+            var flipnote = new Flipnote("pekira_beach.ppm");
+            Assert.IsTrue(flipnote.AnimationInfo.Looping);
+            Assert.IsFalse(flipnote.AnimationInfo.HideLayer1);
+            Assert.IsFalse(flipnote.AnimationInfo.HideLayer2);
+        }
     }
 }

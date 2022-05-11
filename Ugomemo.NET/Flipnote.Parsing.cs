@@ -25,6 +25,8 @@ namespace Ugomemo.NET
             ParseMetadata(bitReader);
 
             Thumbnail = new Thumbnail(bitReader);
+
+            ParseAnimationHeader(bitReader);
         }
 
         /// <summary>
@@ -67,6 +69,33 @@ namespace Ugomemo.NET
 
             // NOTE: The last 2 bytes of the metadata are always null and ignored.
             reader.ReadUInt(16);
+        }
+
+        /// <summary>
+        /// Parses the animation header of the flipnote.
+        /// </summary>
+        private void ParseAnimationHeader(BinaryBitReader reader)
+        {
+            var frameOffsetTableSize = reader.ReadUInt(16);
+            reader.ReadUInt(32);
+
+            var flags = reader.ReadUInt(16);
+            AnimationInfo = new AnimationInfo
+            {
+                Looping = (flags & 0x2) != 0,
+                HideLayer1 = (flags & 0x10) != 0,
+                HideLayer2 = (flags & 0x20) != 0
+            };
+
+            ParseAnimationFrameOffsetTable(reader, frameOffsetTableSize);
+        }
+
+        /// <summary>
+        /// Parses the animation frame offset table of the flipnote.
+        /// </summary>
+        private void ParseAnimationFrameOffsetTable(BinaryBitReader reader, uint size)
+        {
+            // TODO: Parse the animation frame offset table.
         }
     }
 }
