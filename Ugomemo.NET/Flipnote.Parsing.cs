@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using Ugomemo.NET.Exceptions;
 using BinaryBitLib;
+using Ugomemo.NET.Exceptions;
 
 namespace Ugomemo.NET
 {
@@ -23,6 +23,8 @@ namespace Ugomemo.NET
 
             ParseHeader(filename, bitReader);
             ParseMetadata(bitReader);
+
+            Thumbnail = new Thumbnail(bitReader);
         }
 
         /// <summary>

@@ -1,6 +1,7 @@
-using Ugomemo.NET.Exceptions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SixLabors.ImageSharp.PixelFormats;
+using Ugomemo.NET.Exceptions;
 
 namespace Ugomemo.NET.Tests
 {
@@ -51,6 +52,16 @@ namespace Ugomemo.NET.Tests
             Assert.IsTrue(flipnote.CreatedOn.Year == 2011);
             Assert.IsTrue(flipnote.CreatedOn.Month == 7);
             Assert.IsTrue(flipnote.CreatedOn.Day == 30);
+        }
+
+        [TestMethod]
+        [DeploymentItem("TestFiles/pekira_beach.ppm")]
+        public void EnsureThumbnailPixelsMatch()
+        {
+            var flipnote = new Flipnote("pekira_beach.ppm");
+            Assert.IsTrue(flipnote.Thumbnail.Image[0, 0] == new Rgb24(173, 171, 255));
+            Assert.IsTrue(flipnote.Thumbnail.Image[1, 0] == new Rgb24(173, 171, 255));
+            Assert.IsTrue(flipnote.Thumbnail.Image[2, 0] == new Rgb24(173, 171, 255));
         }
     }
 }

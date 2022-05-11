@@ -19,6 +19,11 @@ namespace Ugomemo.NET
         /// </summary>
         public DateTimeOffset CreatedOn { get; private set; }
 
+        /// <summary>
+        /// The tiny (64x48) thumbnail associated with this flipnote.
+        /// </summary>
+        public Thumbnail Thumbnail { get; private set; }
+
         private uint AnimationDataSize { get; set; }
         private uint SoundDataSize { get; set; }
 
