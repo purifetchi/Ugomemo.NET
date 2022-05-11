@@ -46,6 +46,14 @@ namespace Ugomemo.NET.Tests
 
         [TestMethod]
         [DeploymentItem("TestFiles/pekira_beach.ppm")]
+        public void EnsureCorrectLocked()
+        {
+            var flipnote = new Flipnote("pekira_beach.ppm");
+            Assert.IsTrue(flipnote.Locked);
+        }
+
+        [TestMethod]
+        [DeploymentItem("TestFiles/pekira_beach.ppm")]
         public void EnsureCorrectCreatedOn()
         {
             var flipnote = new Flipnote("pekira_beach.ppm");
