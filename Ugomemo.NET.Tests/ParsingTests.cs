@@ -6,11 +6,19 @@ using Ugomemo.NET.Exceptions;
 namespace Ugomemo.NET.Tests
 {
     [TestClass]
+    [DeploymentItem("TestFiles/pekira_beach.ppm")]
     public class ParsingTests
     {
+        private Flipnote flipnote;
+
+        [TestInitialize]
+        public void InitializeParsingTests()
+        {
+            flipnote = new Flipnote("pekira_beach.ppm");
+        }
+
         [TestMethod]
         [DeploymentItem("TestFiles/not_a_flipnote.ppm")]
-        [DeploymentItem("TestFiles/pekira_beach.ppm")]
         public void ParseValidFlipnote()
         {
             Assert.IsTrue(File.Exists("pekira_beach.ppm"));
@@ -28,7 +36,7 @@ namespace Ugomemo.NET.Tests
 
             try
             {
-                var badFlipnote = new Flipnote("pekira_beach.ppm");
+                var goodFlipnote = new Flipnote("pekira_beach.ppm");
             }
             catch (NotAFlipnoteException)
             {
@@ -37,46 +45,36 @@ namespace Ugomemo.NET.Tests
         }
 
         [TestMethod]
-        [DeploymentItem("TestFiles/pekira_beach.ppm")]
         public void EnsureCorrectFrameCount()
         {
-            var flipnote = new Flipnote("pekira_beach.ppm");
             Assert.IsTrue(flipnote.FrameCount == 186);
         }
 
         [TestMethod]
-        [DeploymentItem("TestFiles/pekira_beach.ppm")]
         public void EnsureCorrectLocked()
         {
-            var flipnote = new Flipnote("pekira_beach.ppm");
             Assert.IsTrue(flipnote.Locked);
         }
 
         [TestMethod]
-        [DeploymentItem("TestFiles/pekira_beach.ppm")]
         public void EnsureCorrectCreatedOn()
         {
-            var flipnote = new Flipnote("pekira_beach.ppm");
             Assert.IsTrue(flipnote.CreatedOn.Year == 2011);
             Assert.IsTrue(flipnote.CreatedOn.Month == 7);
             Assert.IsTrue(flipnote.CreatedOn.Day == 30);
         }
 
         [TestMethod]
-        [DeploymentItem("TestFiles/pekira_beach.ppm")]
         public void EnsureThumbnailPixelsMatch()
         {
-            var flipnote = new Flipnote("pekira_beach.ppm");
             Assert.IsTrue(flipnote.Thumbnail.Image[0, 0] == new Rgb24(173, 171, 255));
             Assert.IsTrue(flipnote.Thumbnail.Image[1, 0] == new Rgb24(173, 171, 255));
             Assert.IsTrue(flipnote.Thumbnail.Image[2, 0] == new Rgb24(173, 171, 255));
         }
 
         [TestMethod]
-        [DeploymentItem("TestFiles/pekira_beach.ppm")]
         public void EnsureFlipnoteAnimationInfoIsCorrect()
         {
-            var flipnote = new Flipnote("pekira_beach.ppm");
             Assert.IsTrue(flipnote.AnimationInfo.Looping);
             Assert.IsFalse(flipnote.AnimationInfo.HideLayer1);
             Assert.IsFalse(flipnote.AnimationInfo.HideLayer2);
