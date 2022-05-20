@@ -2,6 +2,9 @@
 
 namespace Ugomemo.NET
 {
+    /// <summary>
+    /// A Flipnote Studio flipnote.
+    /// </summary>
     public sealed partial class Flipnote
     {
         /// <summary>

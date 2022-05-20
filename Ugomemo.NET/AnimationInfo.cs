@@ -1,5 +1,8 @@
 ﻿namespace Ugomemo.NET
 {
+    /// <summary>
+    /// Animation information for a flipnote.
+    /// </summary>
     public sealed class AnimationInfo
     {
         /// <summary>

@@ -4,11 +4,17 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Ugomemo.NET
 {
+    /// <summary>
+    /// The tiny flipnote thumbnail.
+    /// </summary>
     public sealed partial class Thumbnail
     {
         public const int WIDTH = 64;
         public const int HEIGHT = 48;
 
+        /// <summary>
+        /// The image containing the small flipnote thumbnail.
+        /// </summary>
         public Image<Rgb24> Image { get; private set; }
 
         internal Thumbnail(BinaryBitReader reader)
