@@ -2,6 +2,7 @@
 using System.IO;
 using BinaryBitLib;
 using Ugomemo.NET.Exceptions;
+using Ugomemo.NET.IO;
 
 namespace Ugomemo.NET
 {
@@ -18,8 +19,7 @@ namespace Ugomemo.NET
         private void Parse(string filename)
         {
             using var fileStream = new FileStream(filename, FileMode.Open);
-            using var bitReader = new BinaryBitReader(fileStream);
-            bitReader.Encoding = System.Text.Encoding.ASCII;
+            using var bitReader = new BinaryBitReaderEx(fileStream, System.Text.Encoding.ASCII);
 
             ParseHeader(filename, bitReader);
             ParseMetadata(bitReader);
@@ -32,7 +32,7 @@ namespace Ugomemo.NET
         /// <summary>
         /// Parses the header of the flipnote.
         /// </summary>
-        private void ParseHeader(string filename, BinaryBitReader reader)
+        private void ParseHeader(string filename, BinaryBitReaderEx reader)
         {
             if (reader.ReadByte() != MAGIC_STRING[0] ||
                 reader.ReadByte() != MAGIC_STRING[1] ||
@@ -54,7 +54,7 @@ namespace Ugomemo.NET
         /// <summary>
         /// Parses the metadata of the flipnote.
         /// </summary>
-        private void ParseMetadata(BinaryBitReader reader)
+        private void ParseMetadata(BinaryBitReaderEx reader)
         {
             Locked = reader.ReadUInt(16) == 1;
 
@@ -74,7 +74,7 @@ namespace Ugomemo.NET
         /// <summary>
         /// Parses the animation header of the flipnote.
         /// </summary>
-        private void ParseAnimationHeader(BinaryBitReader reader)
+        private void ParseAnimationHeader(BinaryBitReaderEx reader)
         {
             var frameOffsetTableSize = reader.ReadUInt(16);
             reader.ReadUInt(32);
@@ -93,7 +93,7 @@ namespace Ugomemo.NET
         /// <summary>
         /// Parses the animation frame offset table of the flipnote.
         /// </summary>
-        private void ParseAnimationFrameOffsetTable(BinaryBitReader reader, uint size)
+        private void ParseAnimationFrameOffsetTable(BinaryBitReaderEx reader, uint size)
         {
             // Every frame offset is a 4 byte uint32.
             var frameOffsetCount = size / 4;

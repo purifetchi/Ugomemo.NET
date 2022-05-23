@@ -1,6 +1,6 @@
-﻿using BinaryBitLib;
-using SixLabors.ImageSharp;
+﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using Ugomemo.NET.IO;
 
 namespace Ugomemo.NET
 {
@@ -17,12 +17,12 @@ namespace Ugomemo.NET
         /// </summary>
         public Image<Rgb24> Image { get; private set; }
 
-        internal Thumbnail(BinaryBitReader reader)
+        internal Thumbnail(BinaryBitReaderEx reader)
         {
             ParseThumbnail(reader);
         }
 
-        private void ParseThumbnail(BinaryBitReader reader)
+        private void ParseThumbnail(BinaryBitReaderEx reader)
         {
             Image = new Image<Rgb24>(WIDTH, HEIGHT);
 
