@@ -107,8 +107,8 @@ namespace Ugomemo.NET.Animation
             // Iterate for as long as we still have chunks to read.
             while ((flags & 0xFFFFFFFF) > 0)
             {
-                // If the rightmost bit isn't 0, it means the next 8 pixels actually are coded.
-                // Decode them the same way we decode a single line using full compression.
+                // If the leftmost bit isn't 0, it means the next 8 pixels actually are coded.
+                // Decode them the same way we decode a single line with full compression.
                 if ((flags & 0x80000000) != 0)
                 {
                     var chunk = reader.ReadByte();
