@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using BinaryBitLib;
+using Ugomemo.NET.Animation;
 using Ugomemo.NET.Exceptions;
 using Ugomemo.NET.IO;
 
@@ -16,8 +17,15 @@ namespace Ugomemo.NET
         /// </summary>
         private static readonly DateTimeOffset EPOCH = DateTimeOffset.FromUnixTimeSeconds(946684800);
 
-        private void Parse(string filename)
+        /// <summary>
+        /// Whether the flipnote parser should actually generate images for every frame.
+        /// </summary>
+        private bool ShouldGenerateImagesForFrames { get; set; }
+
+        private void Parse(string filename, bool generateFrameImages)
         {
+            ShouldGenerateImagesForFrames = generateFrameImages;
+
             using var fileStream = new FileStream(filename, FileMode.Open);
             using var bitReader = new BinaryBitReaderEx(fileStream, System.Text.Encoding.ASCII);
 
@@ -103,6 +111,30 @@ namespace Ugomemo.NET
             const int DEFAULT_FRAME_TABLE_POSITION = 0x06A8;
             for (var i = 0; i < frameOffsetCount; i++)
                 frameOffsetTable[i] = DEFAULT_FRAME_TABLE_POSITION + size + reader.ReadUInt();
+
+            ParseFrames(reader, frameOffsetTable);
+        }
+
+        /// <summary>
+        /// Parses all of the frames this flipnote has.
+        /// </summary>
+        private void ParseFrames(BinaryBitReaderEx reader, uint[] offsets)
+        {
+            Frames = new Frame[offsets.Length];
+
+            for (var i = 0; i < FrameCount + 1; i++)
+            {
+                reader.Seek(offsets[i]);
+
+                var frame = new Frame(reader);
+                if (frame.FrameInfo.Type == FrameType.Interframe)
+                    frame.MergeWithFrame(Frames[i - 1]);
+
+                if (ShouldGenerateImagesForFrames)
+                    frame.GenerateImage(AnimationInfo);
+
+                Frames[i] = frame;
+            }
         }
     }
 }

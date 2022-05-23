@@ -1,4 +1,5 @@
 ﻿using System;
+using Ugomemo.NET.Animation;
 
 namespace Ugomemo.NET
 {
@@ -32,12 +33,31 @@ namespace Ugomemo.NET
         /// </summary>
         public AnimationInfo AnimationInfo { get; private set; }
 
+        /// <summary>
+        /// The animation frames of this flipnote.
+        /// </summary>
+        public Frame[] Frames { get; private set; }
+
         private uint AnimationDataSize { get; set; }
         private uint SoundDataSize { get; set; }
 
+        /// <summary>
+        /// Load a flipnote and generate images for all frames.
+        /// </summary>
+        /// <param name="filename">The filename of the flipnote.</param>
         public Flipnote(string filename)
         {
-            Parse(filename);
+            Parse(filename, true);
+        }
+
+        /// <summary>
+        /// Load a flipnote.
+        /// </summary>
+        /// <param name="filename">The filename of the flipnote.</param>
+        /// <param name="generateFrameImages">Whether Ugomemo.NET should generate images for all frames.</param>
+        public Flipnote(string filename, bool generateFrameImages)
+        {
+            Parse(filename, generateFrameImages);
         }
     }
 }

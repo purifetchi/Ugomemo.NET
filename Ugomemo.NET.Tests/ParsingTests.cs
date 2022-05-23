@@ -1,5 +1,6 @@
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using Ugomemo.NET.Exceptions;
 
@@ -14,7 +15,7 @@ namespace Ugomemo.NET.Tests
         [TestInitialize]
         public void InitializeParsingTests()
         {
-            flipnote = new Flipnote("pekira_beach.ppm");
+            flipnote = new Flipnote("pekira_beach.ppm", false);
         }
 
         [TestMethod]
@@ -78,6 +79,38 @@ namespace Ugomemo.NET.Tests
             Assert.IsTrue(flipnote.AnimationInfo.Looping);
             Assert.IsFalse(flipnote.AnimationInfo.HideLayer1);
             Assert.IsFalse(flipnote.AnimationInfo.HideLayer2);
+        }
+
+        [TestMethod]
+        public void EnsureFrameInfoIsCorrect()
+        {
+            Assert.IsTrue(flipnote.Frames[0].FrameInfo.Type == Animation.FrameType.Keyframe);
+            Assert.IsTrue(flipnote.Frames[0].FrameInfo.PaperColor == Animation.PaperColor.White);
+            Assert.IsTrue(flipnote.Frames[0].FrameInfo.Layer1Color == Animation.PenColor.InverseOfPaper);
+            Assert.IsTrue(flipnote.Frames[0].FrameInfo.Layer2Color == Animation.PenColor.Blue);
+
+            Assert.IsTrue(flipnote.Frames[1].FrameInfo.Type == Animation.FrameType.Interframe);
+            Assert.IsTrue(flipnote.Frames[1].FrameInfo.PaperColor == Animation.PaperColor.White);
+            Assert.IsTrue(flipnote.Frames[1].FrameInfo.Layer1Color == Animation.PenColor.Red);
+            Assert.IsTrue(flipnote.Frames[1].FrameInfo.Layer2Color == Animation.PenColor.Blue);
+        }
+
+        [TestMethod]
+        [DeploymentItem("TestFiles/sample_frame.png")]
+        public void EnsureFramesAreCorrect()
+        {
+            Assert.IsTrue(File.Exists("sample_frame.png"));
+
+            var flipnote = new Flipnote("pekira_beach.ppm");
+            Image<Rgb24> image = Image.Load<Rgb24>("sample_frame.png");
+
+            for (var x = 0; x < Animation.Frame.WIDTH; x++)
+            {
+                for (var y = 0; x < Animation.Frame.HEIGHT; x++)
+                {
+                    Assert.IsTrue(flipnote.Frames[85].Image[x, y] == image[x, y]);
+                }
+            }
         }
     }
 }
