@@ -38,9 +38,6 @@ namespace Ugomemo.NET
         /// </summary>
         public Frame[] Frames { get; private set; }
 
-        private uint AnimationDataSize { get; set; }
-        private uint SoundDataSize { get; set; }
-
         /// <summary>
         /// Load a flipnote and generate images for all frames.
         /// </summary>

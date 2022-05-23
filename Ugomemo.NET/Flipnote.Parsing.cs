@@ -50,8 +50,7 @@ namespace Ugomemo.NET
                 throw new NotAFlipnoteException($"{filename} is not a flipnote - invalid magic!");
             }
 
-            AnimationDataSize = reader.ReadUInt();
-            SoundDataSize = reader.ReadUInt();
+            reader.ReadULong();
             FrameCount = reader.ReadUInt(16);
 
             var formatVersion = reader.ReadUInt(16);
