@@ -95,7 +95,12 @@ namespace Ugomemo.NET
         /// </summary>
         private void ParseAnimationFrameOffsetTable(BinaryBitReader reader, uint size)
         {
-            // TODO: Parse the animation frame offset table.
+            // Every frame offset is a 4 byte uint32.
+            var frameOffsetCount = size / 4;
+            var frameOffsetTable = new uint[frameOffsetCount];
+
+            for (var i = 0; i < frameOffsetCount; i++)
+                frameOffsetTable[i] = reader.ReadUInt();
         }
     }
 }
