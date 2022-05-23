@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using BinaryBitLib;
 using Ugomemo.NET.Animation;
 using Ugomemo.NET.Exceptions;
 using Ugomemo.NET.IO;
