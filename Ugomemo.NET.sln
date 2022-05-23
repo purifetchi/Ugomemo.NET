@@ -5,11 +5,12 @@ VisualStudioVersion = 16.0.31624.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ugomemo.NET", "Ugomemo.NET\Ugomemo.NET.csproj", "{D79B37CE-CF11-4D6B-8B1F-729DB7CB2EAF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ugomemo.NET.Tests", "Ugomemo.NET.Tests\Ugomemo.NET.Tests.csproj", "{AC0FE25F-AE9E-4864-805C-FD8FFD4BAEE1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ugomemo.NET.Tests", "Ugomemo.NET.Tests\Ugomemo.NET.Tests.csproj", "{AC0FE25F-AE9E-4864-805C-FD8FFD4BAEE1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{505C52F2-DD5C-469D-BF81-1425A98CFCC0}"
 	ProjectSection(SolutionItems) = preProject
 		NOTICE.md = NOTICE.md
+		README.md = README.md
 	EndProjectSection
 EndProject
 Global
