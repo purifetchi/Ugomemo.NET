@@ -99,8 +99,10 @@ namespace Ugomemo.NET
             var frameOffsetCount = size / 4;
             var frameOffsetTable = new uint[frameOffsetCount];
 
+            // Calculate all of the frame positions with the offset already applied, to make seeking easier.
+            const int DEFAULT_FRAME_TABLE_POSITION = 0x06A8;
             for (var i = 0; i < frameOffsetCount; i++)
-                frameOffsetTable[i] = reader.ReadUInt();
+                frameOffsetTable[i] = DEFAULT_FRAME_TABLE_POSITION + size + reader.ReadUInt();
         }
     }
 }
