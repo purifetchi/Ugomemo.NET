@@ -31,6 +31,26 @@ namespace Ugomemo.NET
         /// </summary>
         private uint SoundDataSize { get; set; }
 
+        /// <summary>
+        /// The size of the background music track.
+        /// </summary>
+        private uint BGMTrackSize { get; set; }
+
+        /// <summary>
+        /// The size of the first sound effect track.
+        /// </summary>
+        private uint Sound1TrackSize { get; set; }
+
+        /// <summary>
+        /// The size of the second sound effect track.
+        /// </summary>
+        private uint Sound2TrackSize { get; set; }
+
+        /// <summary>
+        /// The size of the third sound effect track.
+        /// </summary>
+        private uint Sound3TrackSize { get; set; }
+
         private void Parse(string filename, bool generateFrameImages)
         {
             ShouldGenerateImagesForFrames = generateFrameImages;
@@ -182,6 +202,24 @@ namespace Ugomemo.NET
         private void ParseSoundHeader(BinaryBitReaderEx reader)
         {
             ParseSoundFlags(reader);
+
+            // NOTE: If the current reader position isn't an even number, we must round the position
+            //       to the nearest multiple of 4.
+            const int ANIMATION_DATA_BEGIN_OFFSET = 0x6A0;
+            var position = ANIMATION_DATA_BEGIN_OFFSET + AnimationDataSize + (FrameCount + 1);
+            if ((position % 4) != 0)
+                position += 4 - (position % 4);
+
+            reader.Seek(position);
+
+            BGMTrackSize = reader.ReadUInt();
+            Sound1TrackSize = reader.ReadUInt();
+            Sound2TrackSize = reader.ReadUInt();
+            Sound3TrackSize = reader.ReadUInt();
+
+            // NOTE: According to the docs, the framerate values are backwards for some reason.
+            AnimationInfo.PlaybackSpeed = FRAMERATE_TABLE[8 - reader.ReadByte()];
+            AnimationInfo.BGMPlaybackSpeed = FRAMERATE_TABLE[8 - reader.ReadByte()];
         }
     }
 }

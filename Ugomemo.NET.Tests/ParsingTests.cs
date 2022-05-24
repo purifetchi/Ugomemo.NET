@@ -121,5 +121,12 @@ namespace Ugomemo.NET.Tests
             using var image = Image.Load<Rgb24>("sample_frame.png");
             Assert.IsTrue(CompareImages(flipnote.Frames[85].Image, image));
         }
+
+        [TestMethod]
+        public void EnsureSoundHeaderIsCorrect()
+        {
+            Assert.AreEqual(flipnote.AnimationInfo.PlaybackSpeed, 1 / 6f);
+            Assert.AreEqual(flipnote.AnimationInfo.BGMPlaybackSpeed, 1 / 6f);
+        }
     }
 }
