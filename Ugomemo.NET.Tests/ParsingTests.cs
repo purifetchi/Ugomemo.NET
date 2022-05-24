@@ -32,7 +32,7 @@ namespace Ugomemo.NET.Tests
             }
             catch (NotAFlipnoteException)
             {
-                
+
             }
 
             try
@@ -66,11 +66,19 @@ namespace Ugomemo.NET.Tests
         }
 
         [TestMethod]
+        [DeploymentItem("TestFiles/sample_thumbnail.png")]
         public void EnsureThumbnailPixelsMatch()
         {
-            Assert.IsTrue(flipnote.Thumbnail.Image[0, 0] == new Rgb24(173, 171, 255));
-            Assert.IsTrue(flipnote.Thumbnail.Image[1, 0] == new Rgb24(173, 171, 255));
-            Assert.IsTrue(flipnote.Thumbnail.Image[2, 0] == new Rgb24(173, 171, 255));
+            Assert.IsTrue(File.Exists("sample_thumbnail.png"));
+            using var image = Image.Load<Rgb24>("sample_thumbnail.png");
+
+            for (var x = 0; x < Thumbnail.WIDTH; x++)
+            {
+                for (var y = 0; x < Thumbnail.HEIGHT; x++)
+                {
+                    Assert.IsTrue(flipnote.Thumbnail.Image[x, y] == image[x, y]);
+                }
+            }
         }
 
         [TestMethod]
@@ -102,7 +110,7 @@ namespace Ugomemo.NET.Tests
             Assert.IsTrue(File.Exists("sample_frame.png"));
 
             var flipnote = new Flipnote("pekira_beach.ppm");
-            Image<Rgb24> image = Image.Load<Rgb24>("sample_frame.png");
+            using var image = Image.Load<Rgb24>("sample_frame.png");
 
             for (var x = 0; x < Animation.Frame.WIDTH; x++)
             {
