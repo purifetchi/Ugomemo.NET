@@ -98,7 +98,8 @@ namespace Ugomemo.NET
             //       - Author name
             //       - Author ID
             //       - Filename
-            reader.ReadBytes(136);
+            ThumbnailFrameIndex = reader.ReadUInt(16);
+            reader.ReadBytes(134);
 
             var timestamp = reader.ReadUInt();
             CreatedOn = EPOCH.AddSeconds(timestamp);

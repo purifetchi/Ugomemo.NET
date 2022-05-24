@@ -39,6 +39,11 @@ namespace Ugomemo.NET
         public Frame[] Frames { get; private set; }
 
         /// <summary>
+        /// The index of the frame that was used to generate the small thumbnail.
+        /// </summary>
+        public uint ThumbnailFrameIndex { get; private set; }
+
+        /// <summary>
         /// Load a flipnote and generate images for all frames.
         /// </summary>
         /// <param name="filename">The filename of the flipnote.</param>

@@ -66,9 +66,10 @@ namespace Ugomemo.NET.Tests
         }
 
         [TestMethod]
-        public void EnsureCorrectLocked()
+        public void EnsureCorrectMeta()
         {
             Assert.IsTrue(flipnote.Locked);
+            Assert.AreEqual(flipnote.ThumbnailFrameIndex, 180u);
         }
 
         [TestMethod]
