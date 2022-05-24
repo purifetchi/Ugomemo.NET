@@ -4,11 +4,12 @@
 ## Features
 * Parser implementation for Flipnote Studio's PPM file format, including (some of the) metadata, animation frames, thumbnails.
 * Integration with ImageSharp for drawing the frames into images.
+* Ability to export flipnotes into GIF files.
 
 ## Todo
 * Reading and parsing of music and sound effects.
 * Reading the rest of the flipnote's meta information.
-* Ability to export flipnotes into GIFs and video files.
+* Ability to export flipnotes into video files.
 * Verification of flipnote signatures.
 * Support for Flipnote Studio 3D's .KWZ files.
 * Turning this into a NuGet package.
