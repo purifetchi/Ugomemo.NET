@@ -164,24 +164,42 @@ namespace Ugomemo.NET.Animation
         /// </summary>
         internal void MergeWithFrame(Frame other)
         {
-            for (var line = 0; line < HEIGHT; line++)
+            // If the frame translations are both set to 0, we can opt for a much faster
+            // algorithm, that doesn't do all of the translation checking to ensure that
+            // we don't move outside of the bounds of the array.
+            if (FrameInfo.TranslateX == 0 && 
+                FrameInfo.TranslateY == 0)
             {
-                if (line - FrameInfo.TranslateY < 0)
-                    continue;
-
-                if (line - FrameInfo.TranslateY >= HEIGHT)
-                    continue;
-
-                for (var pixel = 0; pixel < WIDTH; pixel++)
+                for (var line = 0; line < HEIGHT; line++)
                 {
-                    if (pixel - FrameInfo.TranslateX < 0)
+                    for (var pixel = 0; pixel < WIDTH; pixel++)
+                    {
+                        Layer1Bitmap[line, pixel] ^= other.Layer1Bitmap[line, pixel];
+                        Layer2Bitmap[line, pixel] ^= other.Layer2Bitmap[line, pixel];
+                    }
+                }
+            }
+            else
+            {
+                for (var line = 0; line < HEIGHT; line++)
+                {
+                    if (line - FrameInfo.TranslateY < 0)
                         continue;
 
-                    if (pixel - FrameInfo.TranslateX >= WIDTH)
+                    if (line - FrameInfo.TranslateY >= HEIGHT)
                         continue;
 
-                    Layer1Bitmap[line, pixel] ^= other.Layer1Bitmap[line - FrameInfo.TranslateY, pixel - FrameInfo.TranslateX];
-                    Layer2Bitmap[line, pixel] ^= other.Layer2Bitmap[line - FrameInfo.TranslateY, pixel - FrameInfo.TranslateX];
+                    for (var pixel = 0; pixel < WIDTH; pixel++)
+                    {
+                        if (pixel - FrameInfo.TranslateX < 0)
+                            continue;
+
+                        if (pixel - FrameInfo.TranslateX >= WIDTH)
+                            continue;
+
+                        Layer1Bitmap[line, pixel] ^= other.Layer1Bitmap[line - FrameInfo.TranslateY, pixel - FrameInfo.TranslateX];
+                        Layer2Bitmap[line, pixel] ^= other.Layer2Bitmap[line - FrameInfo.TranslateY, pixel - FrameInfo.TranslateX];
+                    }
                 }
             }
         }
