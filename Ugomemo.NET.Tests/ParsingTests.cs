@@ -12,6 +12,20 @@ namespace Ugomemo.NET.Tests
     {
         private Flipnote flipnote;
 
+        private bool CompareImages(Image<Rgb24> lhs, Image<Rgb24> rhs)
+        {
+            for (var x = 0; x < lhs.Width; x++)
+            {
+                for (var y = 0; x < lhs.Height; x++)
+                {
+                    if (lhs[x, y] != rhs[x, y])
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
         [TestInitialize]
         public void InitializeParsingTests()
         {
@@ -72,13 +86,7 @@ namespace Ugomemo.NET.Tests
             Assert.IsTrue(File.Exists("sample_thumbnail.png"));
             using var image = Image.Load<Rgb24>("sample_thumbnail.png");
 
-            for (var x = 0; x < Thumbnail.WIDTH; x++)
-            {
-                for (var y = 0; x < Thumbnail.HEIGHT; x++)
-                {
-                    Assert.IsTrue(flipnote.Thumbnail.Image[x, y] == image[x, y]);
-                }
-            }
+            Assert.IsTrue(CompareImages(flipnote.Thumbnail.Image, image));
         }
 
         [TestMethod]
@@ -111,14 +119,7 @@ namespace Ugomemo.NET.Tests
 
             var flipnote = new Flipnote("pekira_beach.ppm");
             using var image = Image.Load<Rgb24>("sample_frame.png");
-
-            for (var x = 0; x < Animation.Frame.WIDTH; x++)
-            {
-                for (var y = 0; x < Animation.Frame.HEIGHT; x++)
-                {
-                    Assert.IsTrue(flipnote.Frames[85].Image[x, y] == image[x, y]);
-                }
-            }
+            Assert.IsTrue(CompareImages(flipnote.Frames[85].Image, image));
         }
     }
 }
