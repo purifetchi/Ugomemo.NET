@@ -29,6 +29,11 @@ namespace Ugomemo.NET.Animation
         public Image<Rgb24> Image { get; private set; }
 
         /// <summary>
+        /// The sound flags for this frame.
+        /// </summary>
+        public SoundFlags SoundFlags { get; internal set; }
+
+        /// <summary>
         /// The first layer's bitmap.
         /// </summary>
         public byte[,] Layer1Bitmap { get; private set; }

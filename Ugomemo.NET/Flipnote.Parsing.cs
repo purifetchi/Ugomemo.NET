@@ -21,6 +21,16 @@ namespace Ugomemo.NET
         /// </summary>
         private bool ShouldGenerateImagesForFrames { get; set; }
 
+        /// <summary>
+        /// The size of the animation data.
+        /// </summary>
+        private uint AnimationDataSize { get; set; }
+
+        /// <summary>
+        /// The size of the sound data.
+        /// </summary>
+        private uint SoundDataSize { get; set; }
+
         private void Parse(string filename, bool generateFrameImages)
         {
             ShouldGenerateImagesForFrames = generateFrameImages;
@@ -32,6 +42,7 @@ namespace Ugomemo.NET
             ParseMetadata(bitReader);
             ParseThumbnail(bitReader);
             ParseAnimationHeader(bitReader);
+            ParseSoundHeader(bitReader);
         }
 
         /// <summary>
@@ -47,7 +58,8 @@ namespace Ugomemo.NET
                 throw new NotAFlipnoteException($"{filename} is not a flipnote - invalid magic!");
             }
 
-            reader.ReadULong();
+            AnimationDataSize = reader.ReadUInt(32);
+            SoundDataSize = reader.ReadUInt(32);
             FrameCount = reader.ReadUInt(16);
 
             var formatVersion = reader.ReadUInt(16);
@@ -142,6 +154,34 @@ namespace Ugomemo.NET
 
                 Frames[i] = frame;
             }
+        }
+
+        /// <summary>
+        /// Parse the sound flags for each frame.
+        /// </summary>
+        private void ParseSoundFlags(BinaryBitReaderEx reader)
+        {
+            const int ANIMATION_DATA_BEGIN_OFFSET = 0x6A0;
+            reader.Seek(ANIMATION_DATA_BEGIN_OFFSET + AnimationDataSize);
+
+            for (var i = 0; i < FrameCount + 1; i++)
+            {
+                var flags = reader.ReadByte();
+                Frames[i].SoundFlags = new SoundFlags
+                {
+                    Sound1 = (flags & 0x1) != 0,
+                    Sound2 = (flags & 0x2) != 0,
+                    Sound3 = (flags & 0x4) != 0
+                };
+            }
+        }
+
+        /// <summary>
+        /// Parses the sound header of the flipnote.
+        /// </summary>
+        private void ParseSoundHeader(BinaryBitReaderEx reader)
+        {
+            ParseSoundFlags(reader);
         }
     }
 }
