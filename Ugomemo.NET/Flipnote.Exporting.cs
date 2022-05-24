@@ -22,6 +22,10 @@ namespace Ugomemo.NET
             gif.Metadata.GetGifMetadata().RepeatCount = (ushort)(AnimationInfo.Looping ? 0 : 1);
             gif.Metadata.GetGifMetadata().ColorTableMode = GifColorTableMode.Local;
 
+            // NOTE: Since ImageSharp auto-inserts an empty blank frame as the first frame
+            //       of an empty Image<T>, we need to remove it to have the gif look fine.
+            gif.Frames.RemoveFrame(0);
+
             gif.SaveAsGif(filename);
         }
     }
