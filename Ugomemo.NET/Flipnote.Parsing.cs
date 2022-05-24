@@ -83,6 +83,9 @@ namespace Ugomemo.NET
         private void ParseAnimationHeader(BinaryBitReaderEx reader)
         {
             var frameOffsetTableSize = reader.ReadUInt(16);
+
+            // NOTE: The docs actually specify that this unknown value is supposed to be only
+            //       16 bits, but from my own experimentation the value is actually 32 bits long.
             reader.ReadUInt(32);
 
             var flags = reader.ReadUInt(16);
