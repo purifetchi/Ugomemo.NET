@@ -30,9 +30,7 @@ namespace Ugomemo.NET
 
             ParseHeader(filename, bitReader);
             ParseMetadata(bitReader);
-
-            Thumbnail = new Thumbnail(bitReader);
-
+            ParseThumbnail(bitReader);
             ParseAnimationHeader(bitReader);
         }
 
@@ -75,6 +73,14 @@ namespace Ugomemo.NET
 
             // NOTE: The last 2 bytes of the metadata are always null and ignored.
             reader.ReadUInt(16);
+        }
+
+        /// <summary>
+        /// Parses the tiny thumbnail of the flipnote.
+        /// </summary>
+        private void ParseThumbnail(BinaryBitReaderEx reader)
+        {
+            Thumbnail = new Thumbnail(reader);
         }
 
         /// <summary>
