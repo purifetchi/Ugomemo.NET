@@ -62,7 +62,7 @@ namespace Ugomemo.NET.Tests
         [TestMethod]
         public void EnsureCorrectFrameCount()
         {
-            Assert.IsTrue(flipnote.FrameCount == 186);
+            Assert.AreEqual(flipnote.FrameCount, 186u);
         }
 
         [TestMethod]
@@ -74,9 +74,9 @@ namespace Ugomemo.NET.Tests
         [TestMethod]
         public void EnsureCorrectCreatedOn()
         {
-            Assert.IsTrue(flipnote.CreatedOn.Year == 2011);
-            Assert.IsTrue(flipnote.CreatedOn.Month == 7);
-            Assert.IsTrue(flipnote.CreatedOn.Day == 30);
+            Assert.AreEqual(flipnote.CreatedOn.Year, 2011);
+            Assert.AreEqual(flipnote.CreatedOn.Month, 7);
+            Assert.AreEqual(flipnote.CreatedOn.Day, 30);
         }
 
         [TestMethod]
@@ -100,15 +100,15 @@ namespace Ugomemo.NET.Tests
         [TestMethod]
         public void EnsureFrameInfoIsCorrect()
         {
-            Assert.IsTrue(flipnote.Frames[0].FrameInfo.Type == Animation.FrameType.Keyframe);
-            Assert.IsTrue(flipnote.Frames[0].FrameInfo.PaperColor == Animation.PaperColor.White);
-            Assert.IsTrue(flipnote.Frames[0].FrameInfo.Layer1Color == Animation.PenColor.InverseOfPaper);
-            Assert.IsTrue(flipnote.Frames[0].FrameInfo.Layer2Color == Animation.PenColor.Blue);
+            Assert.AreEqual(flipnote.Frames[0].FrameInfo.Type, Animation.FrameType.Keyframe);
+            Assert.AreEqual(flipnote.Frames[0].FrameInfo.PaperColor, Animation.PaperColor.White);
+            Assert.AreEqual(flipnote.Frames[0].FrameInfo.Layer1Color, Animation.PenColor.InverseOfPaper);
+            Assert.AreEqual(flipnote.Frames[0].FrameInfo.Layer2Color, Animation.PenColor.Blue);
 
-            Assert.IsTrue(flipnote.Frames[1].FrameInfo.Type == Animation.FrameType.Interframe);
-            Assert.IsTrue(flipnote.Frames[1].FrameInfo.PaperColor == Animation.PaperColor.White);
-            Assert.IsTrue(flipnote.Frames[1].FrameInfo.Layer1Color == Animation.PenColor.Red);
-            Assert.IsTrue(flipnote.Frames[1].FrameInfo.Layer2Color == Animation.PenColor.Blue);
+            Assert.AreEqual(flipnote.Frames[1].FrameInfo.Type, Animation.FrameType.Interframe);
+            Assert.AreEqual(flipnote.Frames[1].FrameInfo.PaperColor, Animation.PaperColor.White);
+            Assert.AreEqual(flipnote.Frames[1].FrameInfo.Layer1Color, Animation.PenColor.Red);
+            Assert.AreEqual(flipnote.Frames[1].FrameInfo.Layer2Color, Animation.PenColor.Blue);
         }
 
         [TestMethod]
