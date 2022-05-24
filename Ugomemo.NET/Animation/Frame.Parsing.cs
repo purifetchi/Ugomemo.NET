@@ -1,4 +1,4 @@
-﻿using Ugomemo.NET.IO;
+﻿using System.IO;
 using Ugomemo.NET.Util;
 
 namespace Ugomemo.NET.Animation
@@ -11,7 +11,7 @@ namespace Ugomemo.NET.Animation
         /// NOTE: The reader must point to the beginning of this frame's data!
         /// </summary>
         /// <param name="reader">The bit reader that has the flipnote.</param>
-        internal Frame(BinaryBitReaderEx reader)
+        internal Frame(BinaryReader reader)
         {
             ParseHeader(reader);
             ParseFrame(reader);
@@ -20,15 +20,16 @@ namespace Ugomemo.NET.Animation
         /// <summary>
         /// Parses the header of this flipnote.
         /// </summary>
-        private void ParseHeader(BinaryBitReaderEx reader)
+        private void ParseHeader(BinaryReader reader)
         {
+            var flags = reader.ReadByte();
             FrameInfo = new FrameInfo
             {
-                PaperColor = (PaperColor)reader.ReadBit(),
-                Layer1Color = (PenColor)reader.ReadUInt(2),
-                Layer2Color = (PenColor)reader.ReadUInt(2),
-                Translated = reader.ReadUInt(2) > 0,
-                Type = (FrameType)reader.ReadBit()
+                PaperColor = (PaperColor)(flags & 0x1),
+                Layer1Color = (PenColor)((flags >> 1) & 0x3),
+                Layer2Color = (PenColor)((flags >> 3) & 0x3),
+                Translated = ((flags >> 5) & 0x3) > 0,
+                Type = (FrameType)((flags >> 7) & 0x1)
             };
 
             if (FrameInfo.Translated)
@@ -41,7 +42,7 @@ namespace Ugomemo.NET.Animation
         /// <summary>
         /// Parses the line compression table for one layer.
         /// </summary>
-        private LineCompressionMethod[] ParseLineCompressionTable(BinaryBitReaderEx reader)
+        private LineCompressionMethod[] ParseLineCompressionTable(BinaryReader reader)
         {
             var lineMethods = new LineCompressionMethod[HEIGHT];
             var line = 0;
@@ -62,7 +63,7 @@ namespace Ugomemo.NET.Animation
         /// <summary>
         /// Parses one layer.
         /// </summary>
-        private byte[,] ParseLayer(BinaryBitReaderEx reader, LineCompressionMethod[] compressionTable)
+        private byte[,] ParseLayer(BinaryReader reader, LineCompressionMethod[] compressionTable)
         {
             var bitmap = new byte[HEIGHT, WIDTH];
 
@@ -97,11 +98,11 @@ namespace Ugomemo.NET.Animation
         /// <summary>
         /// Parses one sparse line of a layer.
         /// </summary>
-        private void ParseSparseLine(BinaryBitReaderEx reader, int line, byte[,] bitmap)
+        private void ParseSparseLine(BinaryReader reader, int line, byte[,] bitmap)
         {
             // The endianness of the flags is swapped because it makes reading line data
             // much much easier.
-            var flags = reader.ReadUInt().SwapEndianness();
+            var flags = reader.ReadUInt32().SwapEndianness();
             var pixel = 0;
 
             // Iterate for as long as we still have chunks to read.
@@ -132,7 +133,7 @@ namespace Ugomemo.NET.Animation
         /// <summary>
         /// Parses one full line of a layer.
         /// </summary>
-        private void ParseFullLine(BinaryBitReaderEx reader, int line, byte[,] bitmap)
+        private void ParseFullLine(BinaryReader reader, int line, byte[,] bitmap)
         {
             var pixel = 0;
             while (pixel < WIDTH)
@@ -149,7 +150,7 @@ namespace Ugomemo.NET.Animation
         /// <summary>
         /// Parse the entire frame.
         /// </summary>
-        private void ParseFrame(BinaryBitReaderEx reader)
+        private void ParseFrame(BinaryReader reader)
         {
             var layer1CompressionTable = ParseLineCompressionTable(reader);
             var layer2CompressionTable = ParseLineCompressionTable(reader);

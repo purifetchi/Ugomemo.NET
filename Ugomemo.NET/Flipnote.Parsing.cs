@@ -2,7 +2,6 @@
 using System.IO;
 using Ugomemo.NET.Animation;
 using Ugomemo.NET.Exceptions;
-using Ugomemo.NET.IO;
 
 namespace Ugomemo.NET
 {
@@ -56,7 +55,7 @@ namespace Ugomemo.NET
             ShouldGenerateImagesForFrames = generateFrameImages;
 
             using var fileStream = new FileStream(filename, FileMode.Open);
-            using var bitReader = new BinaryBitReaderEx(fileStream, System.Text.Encoding.ASCII);
+            using var bitReader = new BinaryReader(fileStream, System.Text.Encoding.ASCII);
 
             ParseHeader(filename, bitReader);
             ParseMetadata(bitReader);
@@ -68,7 +67,7 @@ namespace Ugomemo.NET
         /// <summary>
         /// Parses the header of the flipnote.
         /// </summary>
-        private void ParseHeader(string filename, BinaryBitReaderEx reader)
+        private void ParseHeader(string filename, BinaryReader reader)
         {
             if (reader.ReadByte() != MAGIC_STRING[0] ||
                 reader.ReadByte() != MAGIC_STRING[1] ||
@@ -78,11 +77,11 @@ namespace Ugomemo.NET
                 throw new NotAFlipnoteException($"{filename} is not a flipnote - invalid magic!");
             }
 
-            AnimationDataSize = reader.ReadUInt(32);
-            SoundDataSize = reader.ReadUInt(32);
-            FrameCount = reader.ReadUInt(16);
+            AnimationDataSize = reader.ReadUInt32();
+            SoundDataSize = reader.ReadUInt32();
+            FrameCount = reader.ReadUInt16();
 
-            var formatVersion = reader.ReadUInt(16);
+            var formatVersion = reader.ReadUInt16();
             if (formatVersion != FORMAT_VERSION)
                 throw new NotAFlipnoteException($"{filename} is not a flipnote - invalid format version!");
         }
@@ -90,28 +89,28 @@ namespace Ugomemo.NET
         /// <summary>
         /// Parses the metadata of the flipnote.
         /// </summary>
-        private void ParseMetadata(BinaryBitReaderEx reader)
+        private void ParseMetadata(BinaryReader reader)
         {
-            Locked = reader.ReadUInt(16) == 1;
+            Locked = reader.ReadUInt16() == 1;
 
             // TODO: Parse all of the skipped data.
             //       - Author name
             //       - Author ID
             //       - Filename
-            ThumbnailFrameIndex = reader.ReadUInt(16);
+            ThumbnailFrameIndex = reader.ReadUInt16();
             reader.ReadBytes(134);
 
-            var timestamp = reader.ReadUInt();
+            var timestamp = reader.ReadUInt32();
             CreatedOn = EPOCH.AddSeconds(timestamp);
 
             // NOTE: The last 2 bytes of the metadata are always null and ignored.
-            reader.ReadUInt(16);
+            reader.ReadUInt16();
         }
 
         /// <summary>
         /// Parses the tiny thumbnail of the flipnote.
         /// </summary>
-        private void ParseThumbnail(BinaryBitReaderEx reader)
+        private void ParseThumbnail(BinaryReader reader)
         {
             Thumbnail = new Thumbnail(reader);
         }
@@ -119,15 +118,15 @@ namespace Ugomemo.NET
         /// <summary>
         /// Parses the animation header of the flipnote.
         /// </summary>
-        private void ParseAnimationHeader(BinaryBitReaderEx reader)
+        private void ParseAnimationHeader(BinaryReader reader)
         {
-            var frameOffsetTableSize = reader.ReadUInt(16);
+            var frameOffsetTableSize = reader.ReadUInt16();
 
             // NOTE: The docs actually specify that this unknown value is supposed to be only
             //       16 bits, but from my own experimentation the value is actually 32 bits long.
-            reader.ReadUInt(32);
+            reader.ReadUInt32();
 
-            var flags = reader.ReadUInt(16);
+            var flags = reader.ReadUInt16();
             AnimationInfo = new AnimationInfo
             {
                 Looping = (flags & 0x2) != 0,
@@ -141,7 +140,7 @@ namespace Ugomemo.NET
         /// <summary>
         /// Parses the animation frame offset table of the flipnote.
         /// </summary>
-        private void ParseAnimationFrameOffsetTable(BinaryBitReaderEx reader, uint size)
+        private void ParseAnimationFrameOffsetTable(BinaryReader reader, uint size)
         {
             // Every frame offset is a 4 byte uint32.
             var frameOffsetCount = size / 4;
@@ -150,7 +149,7 @@ namespace Ugomemo.NET
             // Calculate all of the frame positions with the offset already applied, to make seeking easier.
             const int DEFAULT_FRAME_TABLE_POSITION = 0x06A8;
             for (var i = 0; i < frameOffsetCount; i++)
-                frameOffsetTable[i] = DEFAULT_FRAME_TABLE_POSITION + size + reader.ReadUInt();
+                frameOffsetTable[i] = DEFAULT_FRAME_TABLE_POSITION + size + reader.ReadUInt32();
 
             ParseFrames(reader, frameOffsetTable);
         }
@@ -158,13 +157,13 @@ namespace Ugomemo.NET
         /// <summary>
         /// Parses all of the frames this flipnote has.
         /// </summary>
-        private void ParseFrames(BinaryBitReaderEx reader, uint[] offsets)
+        private void ParseFrames(BinaryReader reader, uint[] offsets)
         {
             Frames = new Frame[offsets.Length];
 
             for (var i = 0; i < FrameCount + 1; i++)
             {
-                reader.Seek(offsets[i]);
+                reader.BaseStream.Position = offsets[i];
 
                 var frame = new Frame(reader);
                 if (frame.FrameInfo.Type == FrameType.Interframe)
@@ -180,10 +179,10 @@ namespace Ugomemo.NET
         /// <summary>
         /// Parse the sound flags for each frame.
         /// </summary>
-        private void ParseSoundFlags(BinaryBitReaderEx reader)
+        private void ParseSoundFlags(BinaryReader reader)
         {
             const int ANIMATION_DATA_BEGIN_OFFSET = 0x6A0;
-            reader.Seek(ANIMATION_DATA_BEGIN_OFFSET + AnimationDataSize);
+            reader.BaseStream.Position = ANIMATION_DATA_BEGIN_OFFSET + AnimationDataSize;
 
             for (var i = 0; i < FrameCount + 1; i++)
             {
@@ -200,7 +199,7 @@ namespace Ugomemo.NET
         /// <summary>
         /// Parses the sound header of the flipnote.
         /// </summary>
-        private void ParseSoundHeader(BinaryBitReaderEx reader)
+        private void ParseSoundHeader(BinaryReader reader)
         {
             ParseSoundFlags(reader);
 
@@ -211,12 +210,12 @@ namespace Ugomemo.NET
             if ((position % 4) != 0)
                 position += 4 - (position % 4);
 
-            reader.Seek(position);
+            reader.BaseStream.Position = position;
 
-            BGMTrackSize = reader.ReadUInt();
-            Sound1TrackSize = reader.ReadUInt();
-            Sound2TrackSize = reader.ReadUInt();
-            Sound3TrackSize = reader.ReadUInt();
+            BGMTrackSize = reader.ReadUInt32();
+            Sound1TrackSize = reader.ReadUInt32();
+            Sound2TrackSize = reader.ReadUInt32();
+            Sound3TrackSize = reader.ReadUInt32();
 
             // NOTE: According to the docs, the framerate values are backwards for some reason.
             AnimationInfo.PlaybackSpeed = FRAMERATE_TABLE[8 - reader.ReadByte()];
